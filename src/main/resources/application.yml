@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/layim
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+  thymeleaf:
+    cache: false
+  activemq:
+    broker-url: tcp://127.0.0.1:61616
+    user: admin
+    password: activemq
+    in-memory: true
+    pool:
+      enabled: false
+  mvc:
+    view:
+      prefix: /WEB-INF/
+      suffix: .jsp
+
+server:
+  jsp-servlet:
+    init-parameters:
+      development: true
