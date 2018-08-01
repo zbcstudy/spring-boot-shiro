@@ -32,6 +32,7 @@ public class SecondShiroRealm extends AuthorizingRealm {
 
     /**
      * 认证
+     * 获取认证信息
      * @param token
      * @return
      * @throws AuthenticationException
@@ -43,7 +44,17 @@ public class SecondShiroRealm extends AuthorizingRealm {
         //获取用户输入的token
         UsernamePasswordToken uToken = (UsernamePasswordToken) token;
         String username = uToken.getUsername();
-        User user = userService.findUserByUserName(username);
+//        User user = userService.findUserByUserName(username);
+        /**
+         * 第二种认证策略 没有从数据库中获取数据
+         * 数据库中的密码是通过MD5生成的，此处使用SHA1生成策略
+         * 如果使用数据库中的数据项目会报错
+         */
+        String password = "33f55edabde056126c5de37af063fa9c951b99fd";//使用SHA1生成的密码
+        User user = new User();
+        user.setId(1);
+        user.setUserName("zhaobicheng");
+        user.setPassWord(password);
         log.info("get user: "+ user);
         if (user == null) {
             throw new UnknownAccountException("用户不存在");
@@ -52,7 +63,7 @@ public class SecondShiroRealm extends AuthorizingRealm {
         // 添加盐值加密,盐值必须唯一，在此处使用用户名作为盐值
         ByteSource value = ByteSource.Util.bytes(user.getUserName());
 
-        return new SimpleAuthenticationInfo("123456",user.getPassWord(),value,this.getClass().getName());
+        return new SimpleAuthenticationInfo(user,user.getPassWord(),value,this.getClass().getName());
     }
 
     /**
@@ -85,7 +96,7 @@ public class SecondShiroRealm extends AuthorizingRealm {
      * @param args
      */
     public static void main(String[] args) {
-        String hashAlgorithmName = "MD5";
+        String hashAlgorithmName = "SHA1";
         Object credentials = "123456";
         Object salt = ByteSource.Util.bytes("zhaobicheng");
         int hashIterations = 1;

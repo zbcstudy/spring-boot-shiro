@@ -60,12 +60,14 @@ public class ShiroConfig {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         //shiroRealm设置密码加密方式
         shiroReam.setCredentialsMatcher(credentialsMatcher());
-
+        manager.setAuthenticator(modularRealmAuthenticator());
         //添加多个realm认证
         List<Realm> realms = new ArrayList<>();
         realms.add(shiroRealm());
+
         realms.add(secondShiroRealm());
         manager.setRealms(realms);
+
         return manager;
     }
 
@@ -77,10 +79,10 @@ public class ShiroConfig {
     public ModularRealmAuthenticator modularRealmAuthenticator() {
         ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
         authenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
-        List<Realm> realms = new ArrayList<>();
-        realms.add(shiroRealm());
-        realms.add(secondShiroRealm());
-        authenticator.setRealms(realms);
+//        List<Realm> realms = new ArrayList<>();
+//        realms.add(shiroRealm());
+//        realms.add(secondShiroRealm());
+//        authenticator.setRealms(realms);
         return authenticator;
     }
 
