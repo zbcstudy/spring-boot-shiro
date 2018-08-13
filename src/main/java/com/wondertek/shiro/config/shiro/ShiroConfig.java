@@ -4,6 +4,7 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -38,18 +39,21 @@ public class ShiroConfig {
         //配置登录URL和登录成功的URL
         bean.setLoginUrl("/login");
         bean.setSuccessUrl("/home");
-
+        bean.setUnauthorizedUrl("/unauthorized");
         //配置访问权限
         LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        filterChainDefinitionMap.put("/jsp/login.jsp", "anon");
+        filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/loginUser", "anon");
         filterChainDefinitionMap.put("/logout*", "anon");
-        filterChainDefinitionMap.put("/jsp/error.jsp*","anon");
+        filterChainDefinitionMap.put("/error","anon");
         filterChainDefinitionMap.put("/logout", "logout"); //登出操作
-        filterChainDefinitionMap.put("/jsp/index.jsp*","authc");//表示需要认证才可以访问
+        filterChainDefinitionMap.put("/index","authc");//表示需要认证才可以访问
+        filterChainDefinitionMap.put("/user","authc, roles[user]");
+        filterChainDefinitionMap.put("/admin","authc, roles[admin]");
         filterChainDefinitionMap.put("/*", "authc");
         filterChainDefinitionMap.put("/**", "authc");
         filterChainDefinitionMap.put("/*.*", "authc");
+
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return bean;
     }
@@ -60,14 +64,21 @@ public class ShiroConfig {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         //shiroRealm设置密码加密方式
         shiroReam.setCredentialsMatcher(credentialsMatcher());
-        manager.setAuthenticator(modularRealmAuthenticator());
+//        manager.setAuthenticator(modularRealmAuthenticator());
         //添加多个realm认证
         List<Realm> realms = new ArrayList<>();
         realms.add(shiroRealm());
-
-        realms.add(secondShiroRealm());
+//        realms.add(secondShiroRealm());
         manager.setRealms(realms);
+        manager.setCacheManager(ehCacheManager());
+        return manager;
+    }
 
+
+    @Bean
+    public EhCacheManager ehCacheManager() {
+        EhCacheManager manager = new EhCacheManager();
+//        manager.setCacheManagerConfigFile("classpath:ehcache.xml");
         return manager;
     }
 
@@ -86,6 +97,10 @@ public class ShiroConfig {
         return authenticator;
     }
 
+    /**
+     * 配置shiro 的realm
+     * @return
+     */
     @Bean
     public ShiroRealm shiroRealm() {
         ShiroRealm realm = new ShiroRealm();

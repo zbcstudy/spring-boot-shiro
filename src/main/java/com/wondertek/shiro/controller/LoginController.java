@@ -18,15 +18,15 @@ public class LoginController {
     }
 
     @RequestMapping("/loginUser")
-    public String loginUser(String username,String password,HttpSession session) {
-        UsernamePasswordToken usernamePasswordToken=new UsernamePasswordToken(username,password);
+    public String loginUser(String username, String password, HttpSession session) {
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
         Subject subject = SecurityUtils.getSubject();
         try {
             subject.login(usernamePasswordToken);   //完成登录
-            User user=(User) subject.getPrincipal();
+            User user = (User) subject.getPrincipal();
             session.setAttribute("user", user);
             return "index";
-        } catch(Exception e) {
+        } catch (Exception e) {
             return "login";//返回登录页面
         }
 
@@ -34,7 +34,27 @@ public class LoginController {
 
     @RequestMapping("/logout")
     public String logout() {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
         return "redirect:login";
     }
 
+    @RequestMapping("/user")
+    public String user() {
+        return "user";
+    }
+
+    @RequestMapping("/admin")
+    public String admin() {
+        return "admin";
+    }
+
+    /**
+     * 用户无权限跳转页面
+     * @return
+     */
+    @RequestMapping("/unauthorized")
+    public String unauthorized() {
+        return "unauthorized";
+    }
 }
