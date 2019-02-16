@@ -59,7 +59,7 @@ public class ShiroConfig {
     }
 
     @Bean
-    public SecurityManager securityManager(ShiroRealm shiroReam) {
+    public SecurityManager securityManager(ShiroRealm shiroReam,SecondShiroRealm secondShiroRealm) {
         log.info("-------> shiro已加载");
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         //shiroRealm设置密码加密方式
@@ -68,7 +68,7 @@ public class ShiroConfig {
         //添加多个realm认证
         List<Realm> realms = new ArrayList<>();
         realms.add(shiroRealm());
-//        realms.add(secondShiroRealm());
+        realms.add(secondShiroRealm);
         manager.setRealms(realms);
         manager.setCacheManager(ehCacheManager());
         return manager;

@@ -10,13 +10,13 @@ spring:
       show-sql: true
   thymeleaf:
     cache: false
-  activemq:
-    broker-url: tcp://127.0.0.1:61616
-    user: admin
-    password: activemq
-    in-memory: true
-    pool:
-      enabled: false
+#  activemq:
+#    broker-url: tcp://127.0.0.1:61616
+#    user: admin
+#    password: activemq
+#    in-memory: true
+#    pool:
+#      enabled: false
   mvc:
     view:
       prefix: /WEB-INF/

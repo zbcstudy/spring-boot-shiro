@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,15 +51,7 @@ public class SecondShiroRealm extends AuthorizingRealm {
          * 数据库中的密码是通过MD5生成的，此处使用SHA1生成策略
          * 如果使用数据库中的数据项目会报错
          */
-        String password = "33f55edabde056126c5de37af063fa9c951b99fd";//使用SHA1生成的密码
-        User user = new User();
-        user.setId(1);
-        user.setUserName("zhaobicheng");
-        user.setPassWord(password);
-        log.info("get user: "+ user);
-        if (user == null) {
-            throw new UnknownAccountException("用户不存在");
-        }
+        User user = createUser(username, "SHA1");
 
         // 添加盐值加密,盐值必须唯一，在此处使用用户名作为盐值
         ByteSource value = ByteSource.Util.bytes(user.getUserName());
@@ -77,7 +70,9 @@ public class SecondShiroRealm extends AuthorizingRealm {
         User user = (User) principals.fromRealm(this.getClass().getName()).iterator().next();
         List<String> permissions = new ArrayList<>();
         Set<Role> roles = user.getRoleList();
-        log.info("get roles: "+ roles.toString());
+        if (roles.size() > 0) {
+            log.info("get roles: "+ roles.toString());
+        }
         if (roles.size() > 0) {
             for (Role role : roles) {
                 Set<Permission> permissionList = role.getPermissionList();
@@ -92,15 +87,32 @@ public class SecondShiroRealm extends AuthorizingRealm {
     }
 
     /**
+     * 根据用户名创建用户
+     */
+    public User createUser(String userName,String type){
+        User user = new User();
+        user.setUserName(userName);
+        user.setPassWord(getPassword(userName, type));
+        Set<Role> roles = new HashSet<>();
+        user.setRoleList(roles);
+        return user;
+    }
+
+    public static String getPassword(String userName,String hashType) {
+        String hashAlgorithmName = "SHA1";
+        Object credentials = "123456";
+        Object salt = ByteSource.Util.bytes(userName);
+        int hashIterations = 1;
+        Object simpleHash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+        return simpleHash.toString();
+    }
+
+    /**
      * 生成密码
      * @param args
      */
     public static void main(String[] args) {
-        String hashAlgorithmName = "SHA1";
-        Object credentials = "123456";
-        Object salt = ByteSource.Util.bytes("zhaobicheng");
-        int hashIterations = 1;
-        Object simpleHash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+        Object simpleHash = getPassword("user",null);
         System.out.println(simpleHash);
     }
 }

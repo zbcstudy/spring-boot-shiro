@@ -1,7 +1,5 @@
 package com.wondertek.shiro.config.shiro;
 
-import com.wondertek.shiro.controller.LoginController;
-import com.wondertek.shiro.model.Permission;
 import com.wondertek.shiro.model.Role;
 import com.wondertek.shiro.model.User;
 import com.wondertek.shiro.service.UserService;
