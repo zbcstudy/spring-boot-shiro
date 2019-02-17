@@ -98,6 +98,12 @@ public class SecondShiroRealm extends AuthorizingRealm {
         return user;
     }
 
+    /**
+     * 生成密码
+     * @param userName
+     * @param hashType
+     * @return
+     */
     public static String getPassword(String userName,String hashType) {
         String hashAlgorithmName = "SHA1";
         Object credentials = "123456";

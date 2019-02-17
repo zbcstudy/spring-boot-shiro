@@ -105,6 +105,9 @@ public class ShiroConfig {
     public ShiroRealm shiroRealm() {
         ShiroRealm realm = new ShiroRealm();
         realm.setCredentialsMatcher(credentialsMatcher());
+        realm.setCachingEnabled(true);
+        realm.setCacheManager(ehCacheManager());
+        realm.setAuthenticationCachingEnabled(false);
         return realm;
     }
 
